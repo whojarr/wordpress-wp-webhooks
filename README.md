@@ -57,3 +57,5 @@ AWS_PROFILE=someone sls deploy --stage someone
 # TODO:
 
 * Detect and handle other message types in addition to user_login
+
+* Complete documentation for WP Webhooks configuration
