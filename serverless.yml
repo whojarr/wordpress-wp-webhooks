@@ -1,0 +1,51 @@
+service: wordpress-wp-webhooks
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-domain-manager
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+    - samples/**
+provider:
+  lambdaHashingVersion: 20201221
+  name: aws
+  runtime: python3.8
+  stage: '${opt:stage, ''dev''}'
+  region: ap-southeast-2
+  deploymentBucket:
+    name: dcl-lambdas
+  tags:
+    Product: wordpress-wp-webhooks
+    environment: '${opt:stage, ''dev''}'
+    Account: DCL
+  environment:
+    SERVERLESS_STAGE: '${self:provider.stage}'
+    TEAMS_URL: '${ssm:/wordpress-wp-webhooks/${self:provider.stage}/teams_url}'
+    APIKEY: '${ssm:/wordpress-wp-webhooks/${self:provider.stage}/apikey}'
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - 'lambda:InvokeFunction'
+          Resource: '*'
+functions:
+  app:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+custom:
+  wsgi:
+    app: app.app
+    packRequirements: false
+  pythonRequirements:
+    dockerizePip: false
+    slim: true
+  customDomain:
+    basePath: ''
+    domainName: '${ssm:/wordpress-wp-webhooks/${self:provider.stage}/domain_name}'
+    stage: '${self:provider.stage}'
+    createRoute53Record: true
