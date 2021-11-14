@@ -1,6 +1,6 @@
 # wordpress-wp-webhooks
 
-https://github.com/whojarr/google-form-submission/
+https://github.com/whojarr/wordpress-wp-webhooks/
 
 Contact: David Hunter dhunter@digitalcreation.co.nz
 
